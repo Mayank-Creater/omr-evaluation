@@ -26,6 +26,8 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = os.getenv('SECRET_KEY')
 
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 @app.route('/')
 def home():
     if 'email' in session:
@@ -192,8 +194,9 @@ def process_answers(answer_key_path):
 
     return answers
 
+
 if __name__ == '__main__':
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
     app.run(debug=True)
+
 
