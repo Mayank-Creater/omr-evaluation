@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart OMR Checker</title>
+    <link rel="stylesheet" href={{ url_for('static', filename="styles.css")}}>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <span class="logo-icon">S</span>
+            <span class="logo-text">Smart OMR Checker</span>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <h1 class="main-title">Upload your OMR sheet and Excel Answer Key file to get results.</h1>
+        <form action="/dashboard" method="POST" enctype="multipart/form-data">
+        <div class="drop-area-container">
+            <div class="drop-area omr" id="omrDrop">
+                <i class="fas fa-file-image icon"></i>
+                <input type="file" name="omr" id="omr" style="display: none;">
+                <p id="omr-p">Click to browse OMR Image</p>
+            </div>
+            <div class="drop-area excel" id="excelDrop">
+                <i class="fas fa-file-excel icon"></i>
+                <input type="file" name="excel" id="excel" style="display: none;">
+                <p id="excel-p">Click to browse Excel File</p>
+            </div>
+        </div>
+        <button type="submit" class="continue-btn">Continue</button>
+    </form>
+    </div>
+    <script>
+        document.getElementById('excelDrop').addEventListener('click', function() {
+  document.getElementById('excel').click();
+});
+        document.getElementById('omrDrop').addEventListener('click', function() {
+  document.getElementById('omr').click();
+});
+        document.getElementById('omr').onchange = function (){
+            if (this.files && this.files.length > 0){
+                    const fileName = this.files[0].name;
+                    document.getElementById('omr-p').textContent = `Selected file: ${fileName}`;
+            }
+        }
+
+        document.getElementById('excel').onchange = function (){
+            if (this.files && this.files.length > 0){
+                    const fileName = this.files[0].name;
+                    document.getElementById('excel-p').textContent = `Selected file: ${fileName}`;
+            }
+        }
+        
+    </script>
+</body>
+</html>
