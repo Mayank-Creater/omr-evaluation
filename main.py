@@ -6,16 +6,6 @@ import pandas as pd
 from dotenv import load_dotenv
 import empyrebase
 
-config = {
-    "apiKey": "AIzaSyCu7XcetSzxBHdUrRxgQVafVVP3AVr3D0Q",
-    "authDomain": "omr-evaluation.firebaseapp.com",
-    "projectId": "omr-evaluation",
-    "storageBucket": "omr-evaluation.firebasestorage.app",
-    "messagingSenderId": "656899274121",
-    "appId": "1:656899274121:web:131d15c07ca2bfc93d1d58",
-    "measurementId": "G-J6JD2HYT2X",
-    "databaseURL": "https://omr-evaluation-default-rtdb.firebaseio.com/"
-}
 
 
 firebase = empyrebase.initialize_app(config)
@@ -226,4 +216,5 @@ def process_answers(answer_key_path):
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
     app.run(debug=True)
