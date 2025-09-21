@@ -6,7 +6,16 @@ import pandas as pd
 from dotenv import load_dotenv
 import empyrebase
 
-
+config = {
+    "apiKey": os.getenv('API_KEY'),
+    "authDomain": os.getenv('AUTH_DOMAIN'),
+    "projectId": os.getenv('PROJECT_ID'),
+    "storageBucket": os.getenv('STORAGE_BUCKET'),
+    "messagingSenderId": os.getenv('MESSAGING_SENDER_ID'),
+    "appId": os.getenv("APP_ID"),
+    "measurementId": os.getenv('MEASUREMENT_ID'),
+    "databaseURL": os.getenv('DATABASE_URL')
+}
 
 firebase = empyrebase.initialize_app(config)
 auth = firebase.auth()
@@ -15,13 +24,7 @@ UPLOAD_FOLDER = 'uploads'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = os.getenv('SECRET_KEY') # Change this to a random, secure value
-
-# A simple dictionary for user credentials
-# users = {
-#     'abc@gmail.com': '1234',
-#     'user1': 'userpass'
-# }
+app.secret_key = os.getenv('SECRET_KEY')
 
 @app.route('/')
 def home():
@@ -72,14 +75,6 @@ def register():
         email = request.form['email']
         password = request.form['password']
         user = auth.create_user_with_email_and_password(email, password)
-        
-        # user = auth.create_user(
-        #     email=email,
-        #     email_verified=False,
-        #     password=password,
-        #     display_name=name,
-        #     disabled=False
-        #     )
 
         session['uid'] = user['idToken']
         return redirect(url_for('dashboard'))
@@ -94,14 +89,8 @@ def process_omr(omr_path, answer_path):
     imgCanny = cv2.Canny(imgBlur, 10, 50)
     imgInvert = cv2.bitwise_not(imgGray)
 
-    # threshold
     th, threshed = cv2.threshold(imgGray, 115, 255,cv2.THRESH_BINARY_INV)
     thresh = threshed
-
-    # cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # cnts = imutils.grab_contours(cnts)
-
-    # Filter small contours, which are unlikely to be part of the grid (min_area can be adjusted)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15,15))
     morph = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
@@ -112,10 +101,8 @@ def process_omr(omr_path, answer_path):
     contours = cv2.findContours(morph, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours = contours[0] if len(contours) == 2 else contours[1]
 
-    min_area = 190  # Adjust this if necessary
+    min_area = 190 
     bubbles = [c for c in contours if cv2.contourArea(c) > min_area]
-
-    # Sort the bubbles by position (left-to-right, top-to-bottom)
     bubbles = sorted(bubbles, key=lambda c: cv2.boundingRect(c)[0])
 
 
@@ -136,30 +123,24 @@ def process_omr(omr_path, answer_path):
     choices = 4
     topics = ['PYTHON', 'DATA ANALYSIS', 'MySQL', 'POWER BI', 'Adv STATS']
 
-    # Bubble region extraction based on detected contours
     bubble_data = {}
 
-    # Step 5: Identify grid structure and extract answers
     bubble_width = thresh.shape[1] // cols
     bubble_height = thresh.shape[0] // rows
     bubbles_per_row = len(bubbles) // rows
 
-    # Iterate through each bubble to find the correct answer (based on the filled bubble)
     for i, bubble in enumerate(bubbles):
         if i==99:
             break
         x, y, w, h = cv2.boundingRect(bubble)
 
-        # Calculate question number based on row/column
         row = i // cols
         col = i % cols
         q_num = row * cols + col + 1
-        topic = topics[(q_num - 1) // 20]  # Assign topics based on question number
-
-        # Extract region of interest (ROI) for the bubble
+        topic = topics[(q_num - 1) // 20] 
+        
         roi = thresh[y:y + h, x:x + w]
 
-        # Calculate the width of each bubble (for 4 options)
         bubble_w = w // choices
         filled = None
 
@@ -168,14 +149,11 @@ def process_omr(omr_path, answer_path):
             by = y
             bubble_section = roi[:, j * bubble_w:(j + 1) * bubble_w]
             
-            # Count the number of filled pixels in the bubble section
             total_filled = cv2.countNonZero(bubble_section)
 
-            # Determine which bubble is filled based on pixel count
             if filled is None or total_filled > filled[0]:
-                filled = (total_filled, chr(65 + j))  # A, B, C, D
+                filled = (total_filled, chr(65 + j)) 
 
-        # Store the bubble answer data
         bubble_data[q_num] = {'topic': topic, 'answer': filled[1]}
 
 
@@ -218,3 +196,4 @@ if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
     app.run(debug=True)
+
