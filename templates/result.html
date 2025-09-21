@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #194a4c, #006f74);
+            color: #ffffff;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #d1ffec;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #d1ffec;
+        }
+
+        th {
+            background-color: #007f84;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Examination Results</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Marks Obtained</th>
+                    <th>Total Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for topic, value in result%}
+                <tr>
+                    <td>{{topic}}</td>
+                    <td>{{value}}</td>
+                    <td>20</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
